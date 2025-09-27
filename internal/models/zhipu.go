@@ -19,9 +19,9 @@ func NewMessageModel(request_id string) *MessageModel {
 	}
 }
 
-func (m *MessageModel) AddMessage(msg string) *MessageModel {
+func (m *MessageModel) AddMessage(msg string, role string) *MessageModel {
 	m.messages = append(m.messages, zhipu.ChatCompletionMessage{
-		Role:    "user",
+		Role:    role,
 		Content: msg,
 	})
 	return m
@@ -39,8 +39,8 @@ func NewMessageModelWithInitialPrompt(cfg *config.Config, request_id string) *Me
 }
 
 // GetMessages 获取消息列表
-func (m *MessageModel) GetMessages() []zhipu.ChatCompletionMessage {
-	return m.messages
+func (m *MessageModel) GetMessages() *[]zhipu.ChatCompletionMessage {
+	return &m.messages
 }
 
 // GetRequestID 获取请求ID

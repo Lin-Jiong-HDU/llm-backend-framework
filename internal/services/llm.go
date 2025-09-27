@@ -17,8 +17,9 @@ type ZhipuClient struct {
 
 // ZhipuService 服务封装
 type ZhipuService struct {
-	service    *zhipu.ChatCompletionService
-	request_id string
+	service       *zhipu.ChatCompletionService
+	message_model *models.MessageModel
+	request_id    string
 }
 
 // 服务管理
@@ -40,17 +41,18 @@ func NewZhipuClient(cfg *config.Config) (*ZhipuClient, error) {
 
 // NewZhipuService 创建新的Zhipu服务实例
 func (z *ZhipuClient) NewZhipuService(model string) *ZhipuService {
+
 	service := z.client.ChatCompletion(z.config.LLM.Model)
 	service = service.SetTemperature(z.config.LLM.Temperature)
 	service = service.SetMaxTokens(z.config.LLM.MaxTokens)
 	request_id := uuid.New().String()
 	service = service.SetRequestID(request_id)
-	//
-	// service = service.SetMessages()
-	//
+	messages := models.NewMessageModelWithInitialPrompt(z.config, request_id)
+
 	return &ZhipuService{
-		service:    service,
-		request_id: request_id,
+		service:       service,
+		message_model: messages,
+		request_id:    request_id,
 	}
 }
 
@@ -66,10 +68,42 @@ func (z *ZhipuService) GetService() *zhipu.ChatCompletionService {
 
 // ChatCompletion 执行聊天完成请求
 func (z *ZhipuService) ChatCompletion(message_model *models.MessageModel) (*zhipu.ChatCompletionResponse, error) {
-	z.service.SetMessages(message_model.GetMessages())
+	z.service.SetMessages(*message_model.GetMessages())
 	serviceResponse, err := z.service.Do(context.Background())
 	if err != nil {
 		return nil, err
 	}
 	return &serviceResponse, nil
+}
+
+// NewZhipuServiceManager 创建新的Zhipu服务管理实例
+func NewZhipuServiceManager() *ZhipuServiceManager {
+	return &ZhipuServiceManager{
+		services: make(map[string]*ZhipuService),
+	}
+}
+
+// CreateService 创建并存储新的Zhipu服务实例
+func (m *ZhipuServiceManager) CreateService(client *ZhipuClient, model string) *ZhipuService {
+	service := client.NewZhipuService(model)
+	m.services[service.GetRequestID()] = service
+	return service
+}
+
+// GetServiceByID 根据请求ID获取Zhipu服务实例
+func (m *ZhipuServiceManager) GetServiceByID(request_id string) (*ZhipuService, bool) {
+	service, exists := m.services[request_id]
+	return service, exists
+}
+
+// GetMessageModelByID 根据请求ID获取消息模型实例
+func (m *ZhipuServiceManager) GetMessageModelByID(request_id string) (*models.MessageModel, bool) {
+	service, exists := m.services[request_id]
+	serviceMessageModel := service.message_model
+	return serviceMessageModel, exists
+}
+
+// DeleteServiceByID 删除Zhipu服务实例和消息模型实例
+func (m *ZhipuServiceManager) DeleteServiceByID(request_id string) {
+	delete(m.services, request_id)
 }
