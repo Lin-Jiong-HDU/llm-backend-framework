@@ -7,16 +7,23 @@ import (
 
 // MessageModel 消息模型
 type MessageModel struct {
-	messages   []zhipu.ChatCompletionMessage
-	request_id string
+	messages    []zhipu.ChatCompletionMessage
+	token_usage int64
+	request_id  string
 }
 
 // NewMessageModel 创建新的消息模型实例
 func NewMessageModel(request_id string) *MessageModel {
 	return &MessageModel{
-		messages:   []zhipu.ChatCompletionMessage{},
-		request_id: request_id,
+		messages:    []zhipu.ChatCompletionMessage{},
+		token_usage: 0,
+		request_id:  request_id,
 	}
+}
+
+// AddTokenUsage 增加token使用量
+func (m *MessageModel) AddTokenUsage(tokens int64) {
+	m.token_usage += tokens
 }
 
 func (m *MessageModel) AddMessage(msg string, role string) *MessageModel {
@@ -56,4 +63,9 @@ func (m *MessageModel) ClearMessages() {
 // SetMessages 设置消息列表
 func (m *MessageModel) SetMessages(messages []zhipu.ChatCompletionMessage) {
 	m.messages = messages
+}
+
+// GetTokenUsage 获取token使用情况
+func (m *MessageModel) GetTokenUsage() int64 {
+	return m.token_usage
 }

@@ -67,13 +67,35 @@ func (z *ZhipuService) GetService() *zhipu.ChatCompletionService {
 }
 
 // ChatCompletion 执行聊天完成请求
-func (z *ZhipuService) ChatCompletion(message_model *models.MessageModel) (*zhipu.ChatCompletionResponse, error) {
-	z.service.SetMessages(*message_model.GetMessages())
+func (z *ZhipuService) ChatCompletion(content string) (*zhipu.ChatCompletionResponse, error) {
+	z.service.AddMessage(zhipu.ChatCompletionMessage{
+		Role:    "user",
+		Content: content,
+	})
 	serviceResponse, err := z.service.Do(context.Background())
 	if err != nil {
 		return nil, err
 	}
+
+	// Convert the generic []any slice returned by GetMessages into []zhipu.ChatCompletionMessage
+	if msgHistory := z.service.GetMessages(); msgHistory != nil {
+		raw := *msgHistory // raw is []any
+		converted := make([]zhipu.ChatCompletionMessage, 0, len(raw))
+		for _, v := range raw {
+			if m, ok := v.(zhipu.ChatCompletionMessage); ok {
+				converted = append(converted, m)
+			}
+		}
+		z.message_model.SetMessages(converted)
+		z.message_model.AddTokenUsage(serviceResponse.Usage.TotalTokens)
+	}
+
 	return &serviceResponse, nil
+}
+
+// GetTokenUsage 获取token使用量
+func (z *ZhipuService) GetTokenUsage() int64 {
+	return z.message_model.GetTokenUsage()
 }
 
 // NewZhipuServiceManager 创建新的Zhipu服务管理实例

@@ -14,4 +14,4 @@ require (
 	golang.org/x/net v0.44.0 // indirect
 )
 
-replace github.com/yankeguo/zhipu => github.com/Lin-Jiong-HDU/zhipu-go v1.6.1
+replace github.com/yankeguo/zhipu => github.com/Lin-Jiong-HDU/zhipu-go v1.6.2

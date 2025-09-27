@@ -1,5 +1,5 @@
-github.com/Lin-Jiong-HDU/zhipu-go v1.6.1 h1:u9/UFs648gd8wUET0jfjJFg6BLkQvUQDEMJ/2w2EK9E=
-github.com/Lin-Jiong-HDU/zhipu-go v1.6.1/go.mod h1:aGYBvkPckw1vbp+fq+4XRzTMLcRj9h18Bnqz9iO8HgA=
+github.com/Lin-Jiong-HDU/zhipu-go v1.6.2 h1:mF5GQ2VZHGIGA5h/shYZJSzE/IsPyQSJuj5H2XoFZ9M=
+github.com/Lin-Jiong-HDU/zhipu-go v1.6.2/go.mod h1:aGYBvkPckw1vbp+fq+4XRzTMLcRj9h18Bnqz9iO8HgA=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-resty/resty/v2 v2.16.5 h1:hBKqmWrr7uRc3euHVqmh1HTHcKn99Smr7o5spptdhTM=
