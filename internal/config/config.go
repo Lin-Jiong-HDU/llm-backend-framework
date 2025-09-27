@@ -72,6 +72,7 @@ func Load() (*Config, error) {
 		LLM: LLMConfig{
 			Provider:    "zhipu",
 			BaseURL:     "https://open.bigmodel.cn/api/paas/v4",
+			APIKey:      "",
 			Model:       "glm-4.5",
 			Timeout:     60,
 			Temperature: 0.7,
@@ -87,6 +88,7 @@ func Load() (*Config, error) {
 			TokenExpiry:   24,
 			RefreshExpiry: 168, // 7 days
 			APIKeyHeader:  "X-API-Key",
+			JWTSecret:     "your-secret-key",
 		},
 		Prompt: InitialPrompt{
 			Prompt: "你是一个乐于助人的AI助手。你的名字叫做小智。",

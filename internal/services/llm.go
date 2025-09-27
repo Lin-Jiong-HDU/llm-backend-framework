@@ -40,7 +40,7 @@ func NewZhipuClient(cfg *config.Config) (*ZhipuClient, error) {
 }
 
 // NewZhipuService 创建新的Zhipu服务实例
-func (z *ZhipuClient) NewZhipuService(model string) *ZhipuService {
+func (z *ZhipuClient) NewZhipuService() *ZhipuService {
 
 	service := z.client.ChatCompletion(z.config.LLM.Model)
 	service = service.SetTemperature(z.config.LLM.Temperature)
@@ -68,6 +68,7 @@ func (z *ZhipuService) GetService() *zhipu.ChatCompletionService {
 
 // ChatCompletion 执行聊天完成请求
 func (z *ZhipuService) ChatCompletion(content string) (*zhipu.ChatCompletionResponse, error) {
+	z.service.SetMessages(*z.message_model.GetMessages())
 	z.service.AddMessage(zhipu.ChatCompletionMessage{
 		Role:    "user",
 		Content: content,
@@ -106,8 +107,8 @@ func NewZhipuServiceManager() *ZhipuServiceManager {
 }
 
 // CreateService 创建并存储新的Zhipu服务实例
-func (m *ZhipuServiceManager) CreateService(client *ZhipuClient, model string) *ZhipuService {
-	service := client.NewZhipuService(model)
+func (m *ZhipuServiceManager) CreateService(client *ZhipuClient) *ZhipuService {
+	service := client.NewZhipuService()
 	m.services[service.GetRequestID()] = service
 	return service
 }
